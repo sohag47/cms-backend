@@ -50,14 +50,14 @@ namespace cms_backend.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 5, 20, 17, 10, 19, 0, DateTimeKind.Utc),
                             Email = "john@doe.com",
                             Name = "John Doe"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 5, 20, 17, 10, 19, 0, DateTimeKind.Utc),
                             Email = "sohag@email.com",
                             Name = "Minhazul Islam Sohag"
                         });

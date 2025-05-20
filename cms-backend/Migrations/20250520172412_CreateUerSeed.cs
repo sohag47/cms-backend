@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace cms_backend.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateUerTBLNDSeedData : Migration
+    public partial class CreateUerSeed : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,8 +33,8 @@ namespace cms_backend.Migrations
                 columns: new[] { "Id", "CreatedAt", "Email", "Name" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "john@doe.com", "John Doe" },
-                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "sohag@email.com", "Minhazul Islam Sohag" }
+                    { 1, new DateTime(2025, 5, 20, 17, 10, 19, 0, DateTimeKind.Utc), "john@doe.com", "John Doe" },
+                    { 2, new DateTime(2025, 5, 20, 17, 10, 19, 0, DateTimeKind.Utc), "sohag@email.com", "Minhazul Islam Sohag" }
                 });
         }
 

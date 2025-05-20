@@ -12,8 +12,8 @@ using cms_backend.Data;
 namespace cms_backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250520165303_CreateUerTBLNDSeedData")]
-    partial class CreateUerTBLNDSeedData
+    [Migration("20250520172412_CreateUerSeed")]
+    partial class CreateUerSeed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,14 +53,14 @@ namespace cms_backend.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 5, 20, 17, 10, 19, 0, DateTimeKind.Utc),
                             Email = "john@doe.com",
                             Name = "John Doe"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2025, 5, 20, 17, 10, 19, 0, DateTimeKind.Utc),
                             Email = "sohag@email.com",
                             Name = "Minhazul Islam Sohag"
                         });
