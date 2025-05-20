@@ -45,6 +45,22 @@ namespace cms_backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "john@doe.com",
+                            Name = "John Doe"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "sohag@email.com",
+                            Name = "Minhazul Islam Sohag"
+                        });
                 });
 #pragma warning restore 612, 618
         }

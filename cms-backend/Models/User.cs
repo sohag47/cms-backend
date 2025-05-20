@@ -16,6 +16,6 @@ namespace cms_backend.Models
         public string Email { get; set; } = string.Empty;
 
         [DataType(DataType.Date)]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
     }
 }
