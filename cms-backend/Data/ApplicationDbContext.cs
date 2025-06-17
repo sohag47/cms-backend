@@ -37,16 +37,16 @@ namespace cms_backend.Data
                     Id = 1,
                     Username = "admin",
                     Email = "admin@example.com",
-                    PasswordHash = SeederHelper.HashPassword("12345678"),
-                    CreatedAt = DateTime.UtcNow
+                    PasswordHash = "12345678",
+                    CreatedAt = new DateTime(2024, 01, 01, 10, 0, 0, DateTimeKind.Utc)
                 },
                 new User
                 {
                     Id = 2,
                     Username = "john",
                     Email = "john@example.com",
-                    PasswordHash = SeederHelper.HashPassword("12345678"),
-                    CreatedAt = DateTime.UtcNow
+                    PasswordHash = "12345678",
+                    CreatedAt = new DateTime(2024, 01, 01, 10, 0, 0, DateTimeKind.Utc)
                 }
             );
 
@@ -59,7 +59,7 @@ namespace cms_backend.Data
                     Slug = "welcome-blog",
                     Content = "This is the first blog post.",
                     AuthorId = 1,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = new DateTime(2024, 01, 01, 10, 0, 0, DateTimeKind.Utc)
                 },
                 new Post
                 {
@@ -68,7 +68,7 @@ namespace cms_backend.Data
                     Slug = "ef-core-tips",
                     Content = "Learn how to use EF Core effectively.",
                     AuthorId = 2,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = new DateTime(2024, 01, 01, 10, 0, 0, DateTimeKind.Utc)
                 }
             );
         }
@@ -110,26 +110,5 @@ namespace cms_backend.Data
             return base.SaveChangesAsync(cancellationToken);
         }
 
-
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Entity<User>().HasData(
-        //        new User
-        //        {
-        //            Id = 1,
-        //            Name = "John Doe",
-        //            Email = "john@doe.com",
-        //            CreatedAt = new DateTime(2025, 5, 20, 17, 10, 19, DateTimeKind.Utc)
-
-        //        },
-        //        new User
-        //        {
-        //            Id = 2,
-        //            Name = "Minhazul Islam Sohag",
-        //            Email = "sohag@email.com",
-        //            CreatedAt = new DateTime(2025, 5, 20, 17, 10, 19, DateTimeKind.Utc)
-        //        }
-        //    );
-        //}
     }
 }
