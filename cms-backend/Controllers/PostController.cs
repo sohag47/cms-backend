@@ -1,5 +1,6 @@
 ﻿using cms_backend.Data;
 using cms_backend.Models;
+using cms_backend.Models.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,68 +17,71 @@ namespace cms_backend.Controllers
             context = _context;
         }
 
-        // GET: api/<PostController>
+        // GET: api/post
         [HttpGet]
-        public ActionResult<ApiResponse<IEnumerable<Post>>> Get()
+        public async Task<IActionResult> Get()
         {
-            var posts = context.Posts.ToList();
-            return Ok(new ApiResponse<IEnumerable<Post>>(posts, "posts Found Succefully"));
+            var posts = await context.Posts.ToListAsync();
+            return Ok(ApiResponse<IEnumerable<Post>>.Ok(posts, "Post found successfully"));
         }
 
-        // GET api/<PostController>/5
+        // GET api/post/5
         [HttpGet("{id}")]
-        public ActionResult<ApiResponse<Post>> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var post = context.Posts.Find(id);
-            if (post == null) return NotFound(new ApiResponse<Post>(null, "Post not found", false));
-            return Ok(new ApiResponse<Post>(post));
+            var post = await context.Posts.FindAsync(id);
+
+            if (post == null)
+            {
+                return NotFound(ApiResponse<string>.Fail("Post not found."));
+            }
+
+            return Ok(ApiResponse<Post>.Ok(post));
         }
 
-        // POST api/<PostController>
+        // POST api/post
         [HttpPost]
-        public ActionResult<ApiResponse<Post>> Post([FromBody] Post post)
+        public async Task<IActionResult> Post([FromBody] Post post)
         {
-            if (!ModelState.IsValid) return BadRequest(new ApiResponse<Post>(null, "Invalid data", false));
-
             context.Posts.Add(post);
-            context.SaveChanges();
-            return CreatedAtAction(nameof(Get), new { id = post.Id }, new ApiResponse<Post>(post, "Post created successfully"));
+            await context.SaveChangesAsync();
 
+            return CreatedAtAction(nameof(Get), new { id = post.Id },
+                ApiResponse<Post>.Ok(post, "Post created successfully."));
         }
 
-        // PUT api/<PostController>/5
+        // PUT api/post/5
         [HttpPut("{id}")]
-        public ActionResult<ApiResponse<Post>> Put(int id, [FromBody] Post post)
+        public async Task<IActionResult> Put(int id, [FromBody] Post updatedPost)
         {
-            if (id != post.Id) return BadRequest(new ApiResponse<Post>(null, "Invalid data", false));
-            context.Entry(post).State = EntityState.Modified;
-            context.SaveChanges();
-            return Ok(new ApiResponse<Post>(post, "Post updated"));
+            var post = await context.Posts.FindAsync(id);
+            if (post == null)
+                return NotFound(ApiResponse<string>.Fail("Post not found."));
+
+            post.Title = updatedPost.Title;
+            post.Slug = updatedPost.Slug;
+            post.Content = updatedPost.Content;
+            post.AuthorId = updatedPost.AuthorId;
+            post.UpdatedBy = 1;
+            post.UpdatedAt = DateTime.Now;
+
+            await context.SaveChangesAsync();
+
+            return Ok(ApiResponse<Post>.Ok(post, "Post updated successfully."));
         }
 
-        // DELETE api/<PostController>/5
+        // DELETE api/post/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse<string>>> Delete(int id)
         {
             var post = await context.Posts.FindAsync(id);
-            if (post == null) return NotFound(new ApiResponse<string>(null, "Post not found", false));
+            if (post == null) return NotFound(ApiResponse<string>.Fail("Post not found."));
 
-            post.IsDeleted = true;
+            post.DeletedBy = 1;
+            post.DeletedAt = DateTime.Now;
             await context.SaveChangesAsync();
 
-            return Ok(new ApiResponse<string>("Post deleted successfully"));
+            return NoContent();
         }
-        //public ActionResult<ApiResponse<string>> Delete(int id)
-        //{
-        //    var post = context.Posts.Find(id);
-        //    if (post == null) return NotFound(new ApiResponse<string>(null, "Post not found", false));
-
-        //    post.IsDeleted = true;
-
-        //    //context.Posts.Remove(post);
-        //    //context.SaveChanges();
-
-        //    return Ok(new ApiResponse<string>("Post deleted successfully"));
-        //}
     }
 }

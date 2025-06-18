@@ -22,6 +22,6 @@ namespace cms_backend.Models
         [Required]
         public int AuthorId { get; set; }
 
-        public User Author { get; set; } = null!;
+        public User? Author { get; set; }
     }
 }

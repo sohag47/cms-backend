@@ -40,17 +40,14 @@ namespace cms_backend.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("int");
 
                     b.Property<string>("Slug")
                         .IsRequired()
@@ -65,8 +62,8 @@ namespace cms_backend.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -81,7 +78,7 @@ namespace cms_backend.Migrations
                             AuthorId = 1,
                             Content = "This is the first blog post.",
                             CreatedAt = new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
+                            CreatedBy = 1,
                             Slug = "welcome-blog",
                             Title = "Welcome to the Blog"
                         },
@@ -91,7 +88,7 @@ namespace cms_backend.Migrations
                             AuthorId = 2,
                             Content = "Learn how to use EF Core effectively.",
                             CreatedAt = new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
+                            CreatedBy = 1,
                             Slug = "ef-core-tips",
                             Title = "EF Core Tips"
                         });
@@ -108,21 +105,18 @@ namespace cms_backend.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -132,8 +126,8 @@ namespace cms_backend.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -149,8 +143,8 @@ namespace cms_backend.Migrations
                         {
                             Id = 1,
                             CreatedAt = new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
                             Email = "admin@example.com",
-                            IsDeleted = false,
                             PasswordHash = "12345678",
                             Username = "admin"
                         },
@@ -158,8 +152,8 @@ namespace cms_backend.Migrations
                         {
                             Id = 2,
                             CreatedAt = new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
                             Email = "john@example.com",
-                            IsDeleted = false,
                             PasswordHash = "12345678",
                             Username = "john"
                         });

@@ -23,12 +23,11 @@ namespace cms_backend.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    DeletedBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -46,12 +45,11 @@ namespace cms_backend.Migrations
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AuthorId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<int>(type: "int", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    DeletedBy = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -66,20 +64,20 @@ namespace cms_backend.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Email", "IsDeleted", "PasswordHash", "UpdatedAt", "UpdatedBy", "Username" },
+                columns: new[] { "Id", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Email", "PasswordHash", "UpdatedAt", "UpdatedBy", "Username" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc), null, null, null, "admin@example.com", false, "12345678", null, null, "admin" },
-                    { 2, new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc), null, null, null, "john@example.com", false, "12345678", null, null, "john" }
+                    { 1, new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc), 1, null, null, "admin@example.com", "12345678", null, null, "admin" },
+                    { 2, new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc), 1, null, null, "john@example.com", "12345678", null, null, "john" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Posts",
-                columns: new[] { "Id", "AuthorId", "Content", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "IsDeleted", "Slug", "Title", "UpdatedAt", "UpdatedBy" },
+                columns: new[] { "Id", "AuthorId", "Content", "CreatedAt", "CreatedBy", "DeletedAt", "DeletedBy", "Slug", "Title", "UpdatedAt", "UpdatedBy" },
                 values: new object[,]
                 {
-                    { 1, 1, "This is the first blog post.", new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc), null, null, null, false, "welcome-blog", "Welcome to the Blog", null, null },
-                    { 2, 2, "Learn how to use EF Core effectively.", new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc), null, null, null, false, "ef-core-tips", "EF Core Tips", null, null }
+                    { 1, 1, "This is the first blog post.", new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc), 1, null, null, "welcome-blog", "Welcome to the Blog", null, null },
+                    { 2, 2, "Learn how to use EF Core effectively.", new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc), 1, null, null, "ef-core-tips", "EF Core Tips", null, null }
                 });
 
             migrationBuilder.CreateIndex(
