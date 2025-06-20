@@ -1,9 +1,10 @@
 using cms_backend.Data;
+using cms_backend.Models.Base;
+using cms_backend.Repositories;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
-using cms_backend.Models.Base;
+using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,7 +29,8 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
         return new BadRequestObjectResult(response);
     };
 });
-
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IPostRepository, PostRepository>();
 
 // Use the recommended method to register FluentValidation services
 builder.Services.AddFluentValidationAutoValidation()

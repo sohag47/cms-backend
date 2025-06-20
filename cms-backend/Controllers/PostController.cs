@@ -1,83 +1,87 @@
-﻿using cms_backend.Data;
+﻿using AutoMapper;
+using cms_backend.Data;
+using cms_backend.DTOs.Posts;
 using cms_backend.Models;
 using cms_backend.Models.Base;
+using cms_backend.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace cms_backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PostController(ApplicationDbContext _context) : ControllerBase
+    public class PostController(IPostRepository _postRepo, IMapper _mapper) : ControllerBase
     {
-        private readonly ApplicationDbContext context = _context;
+        private readonly IPostRepository postRepo = _postRepo;
+        private readonly IMapper mapper = _mapper;
 
         // GET: api/post
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Index()
         {
-            var posts = await context.Posts.ToListAsync();
-            return Ok(ApiResponse<IEnumerable<Post>>.Ok(posts, "Post found successfully"));
+            var posts = await postRepo.GetAllAsync(p => p.Author);
+            var postDtos = mapper.Map<IEnumerable<PostResponseDto>>(posts);
+            return Ok(ApiResponse<IEnumerable<PostResponseDto>>.Ok(postDtos));
         }
 
         // GET api/post/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Show(int id)
         {
-            var post = await context.Posts.FindAsync(id);
+            var post = await postRepo.GetByIdAsync(id, p => p.Author);
 
             if (post == null)
-            {
                 return NotFound(ApiResponse<string>.Fail("Post not found."));
-            }
 
-            return Ok(ApiResponse<Post>.Ok(post));
+            var postDto = mapper.Map<PostResponseDto>(post);
+            return Ok(ApiResponse<PostResponseDto>.Ok(postDto, "Post found successfully"));
         }
 
         // POST api/post
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Post post)
+        public async Task<IActionResult> Store([FromBody] Post post)
         {
-            context.Posts.Add(post);
-            await context.SaveChangesAsync();
+            await postRepo.AddAsync(post);
+            await postRepo.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(Get), new { id = post.Id },
+
+            return CreatedAtAction(nameof(Show), new { id = post.Id },
                 ApiResponse<Post>.Ok(post, "Post created successfully."));
         }
 
         // PUT api/post/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Post updatedPost)
+        public async Task<IActionResult> Update(int id, [FromBody] Post updatedPost)
         {
-            var post = await context.Posts.FindAsync(id);
+            var post = await postRepo.GetByIdAsync(id);
             if (post == null)
                 return NotFound(ApiResponse<string>.Fail("Post not found."));
 
             post.Title = updatedPost.Title;
             post.Slug = updatedPost.Slug;
             post.Content = updatedPost.Content;
-            post.AuthorId = updatedPost.AuthorId;
-            post.UpdatedBy = 1;
-            post.UpdatedAt = DateTime.Now;
+            post.AuthorId = 1;
 
-            await context.SaveChangesAsync();
+            postRepo.Update(post);
+            await postRepo.SaveChangesAsync();
 
-            return Ok(ApiResponse<Post>.Ok(post, "Post updated successfully."));
+            return CreatedAtAction(nameof(Show), new { id = post.Id },
+                ApiResponse<Post>.Ok(post, "Post updated successfully."));
         }
 
         // DELETE api/post/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ApiResponse<string>>> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var post = await context.Posts.FindAsync(id);
+            var post = await postRepo.GetByIdAsync(id);
             if (post == null) return NotFound(ApiResponse<string>.Fail("Post not found."));
 
-            post.DeletedBy = 1;
-            post.DeletedAt = DateTime.Now;
-            await context.SaveChangesAsync();
-
-            return NoContent();
+            postRepo.Delete(post);
+            await postRepo.SaveChangesAsync();
+            return Ok(ApiResponse<string>.Ok(null, "Post deleted successfully."));
         }
     }
 }

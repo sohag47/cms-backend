@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using cms_backend.DTOs.Posts;
+using cms_backend.DTOs.Users;
 using cms_backend.Models;
 
 namespace cms_backend.Mappings
@@ -8,10 +9,11 @@ namespace cms_backend.Mappings
     {
         public AutoMapperProfile() 
         {
+            CreateMap<User, UserResponseDto>();
             CreateMap<PostCreateDto, Post>();
             CreateMap<PostUpdateDto, Post>();
             CreateMap<Post, PostResponseDto>()
-                .ForMember(dest => dest.AuthorUsername, opt => opt.MapFrom(src => src.Author.Username));
+            .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author));
         }
     }
 }

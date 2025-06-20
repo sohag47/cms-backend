@@ -8,6 +8,7 @@ namespace cms_backend.Models.Base
         public T? Data { get; set; }
         public object? Errors { get; set; }
 
+        // success response
         public static ApiResponse<T> Ok(T data, string? message = null)
         {
             return new ApiResponse<T>
@@ -18,6 +19,7 @@ namespace cms_backend.Models.Base
             };
         }
 
+        // error response
         public static ApiResponse<T> Fail(string message, object? errors = null)
         {
             return new ApiResponse<T>
