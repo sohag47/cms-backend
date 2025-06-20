@@ -12,5 +12,20 @@ namespace cms_backend.DTOs.Posts
 
         [Required]
         public string Content { get; set; } = null!;
+
+        //[Required, EmailAddress]
+        //public string Email { get; set; } = null!;
+
+        //[Required, Phone]
+        //public string Phone { get; set; } = default!;
+        
+        //[Required, DataType(DataType.Date)]
+        //public DateTime DateOfBirth { get; set; }
+
+        //[Required]
+        //public bool IsActive { get; set; }
+
+        //[Required]
+        //public IFormFile Photo { get; set; } = default!;
     }
 }

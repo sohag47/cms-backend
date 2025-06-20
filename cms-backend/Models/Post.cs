@@ -23,5 +23,21 @@ namespace cms_backend.Models
         public int AuthorId { get; set; }
 
         public User? Author { get; set; }
+
+        // Ectra
+        //[Required]
+        //public string Email { get; set; } = default!;
+
+        //[Required]
+        //public string Phone { get; set; } = default!;
+
+        //[Required]
+        //public DateTime DateOfBirth { get; set; }
+
+        //[Required]
+        //public bool IsActive { get; set; }
+
+        //[Required]
+        //public string PhotoPath { get; set; } = string.Empty;
     }
 }
