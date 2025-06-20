@@ -9,13 +9,9 @@ namespace cms_backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PostController : ControllerBase
+    public class PostController(ApplicationDbContext _context) : ControllerBase
     {
-        private readonly ApplicationDbContext context;
-        public PostController(ApplicationDbContext _context)
-        {
-            context = _context;
-        }
+        private readonly ApplicationDbContext context = _context;
 
         // GET: api/post
         [HttpGet]
