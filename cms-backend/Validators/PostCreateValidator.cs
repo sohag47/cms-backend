@@ -8,21 +8,31 @@ namespace cms_backend.Validators
     {
         public PostCreateValidator()
         {
-            RuleFor(x => x.Title).NotEmpty().Length(5, 150);
+            RuleFor(x => x.Title)
+            .NotEmpty().WithMessage("Title is required.")
+            .Length(5, 150);
 
-            RuleFor(x => x.Slug).NotEmpty().MaximumLength(100);
+            RuleFor(x => x.Slug)
+                .NotEmpty().WithMessage("Slug is required.")
+                .MaximumLength(100);
 
-            RuleFor(x => x.Content).NotEmpty();
+            RuleFor(x => x.Content)
+                .NotEmpty();
 
-            //RuleFor(x => x.Email).EmailAddress();
+            //RuleFor(x => x.Email)
+            //    .NotEmpty()
+            //    .EmailAddress();
 
-            //RuleFor(x => x.Phone).Matches(@"^\+?\d{10,15}$").WithMessage("Invalid phone number");
+            //RuleFor(x => x.Phone)
+            //    .NotEmpty()
+            //    .Matches(@"^\d{10,15}$").WithMessage("Phone must be 10-15 digits.");
 
-            //RuleFor(x => x.DateOfBirth).LessThan(DateTime.Now).WithMessage("Date must be in the past");
+            //RuleFor(x => x.DateOfBirth)
+            //    .NotNull()
+            //    .LessThan(DateTime.Today).WithMessage("Date of birth must be in the past.");
 
-            //RuleFor(x => x.Photo)
-            //.NotNull().WithMessage("Photo is required")
-            //.Must(f => f.Length <= 2 * 1024 * 1024).WithMessage("Photo must be less than 2MB");
+            //RuleFor(x => x.IsActive)
+            //    .NotNull().WithMessage("IsActive is required.");
         }
     }
 }

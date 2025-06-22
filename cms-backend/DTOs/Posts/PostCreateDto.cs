@@ -4,28 +4,25 @@ namespace cms_backend.DTOs.Posts
 {
     public class PostCreateDto
     {
-        [Required, StringLength(150, MinimumLength = 5)]
+        //[Required, StringLength(150, MinimumLength = 5)]
         public string Title { get; set; } = null!;
 
-        [Required, StringLength(100)]
+        //[Required, StringLength(100)]
         public string Slug { get; set; } = null!;
 
-        [Required]
+        //[Required]
         public string Content { get; set; } = null!;
 
         //[Required, EmailAddress]
         //public string Email { get; set; } = null!;
 
-        //[Required, Phone]
+        ////[Required, Phone]
         //public string Phone { get; set; } = default!;
-        
-        //[Required, DataType(DataType.Date)]
-        //public DateTime DateOfBirth { get; set; }
 
-        //[Required]
-        //public bool IsActive { get; set; }
+        ////[Required, DataType(DataType.Date)]
+        //public DateTime? DateOfBirth { get; set; }
 
-        //[Required]
-        //public IFormFile Photo { get; set; } = default!;
+        ////[Required]
+        //public bool? IsActive { get; set; }
     }
 }

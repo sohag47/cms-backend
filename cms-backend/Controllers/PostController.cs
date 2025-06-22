@@ -42,14 +42,12 @@ namespace cms_backend.Controllers
 
         // POST api/post
         [HttpPost]
-        public async Task<IActionResult> Store([FromBody] Post post)
+        public async Task<IActionResult> Store([FromBody] PostCreateDto dto)
         {
-            await postRepo.AddAsync(post);
-            await postRepo.SaveChangesAsync();
+            var responseDto = await postRepo.CreatePostAsync(dto);
 
-
-            return CreatedAtAction(nameof(Show), new { id = post.Id },
-                ApiResponse<Post>.Ok(post, "Post created successfully."));
+            return CreatedAtAction(nameof(Show), new { id = responseDto.Id },
+                ApiResponse<PostResponseDto>.Ok(responseDto, "Post created successfully."));
         }
 
         // PUT api/post/5

@@ -32,12 +32,10 @@ namespace cms_backend.Models
         //public string Phone { get; set; } = default!;
 
         //[Required]
-        //public DateTime DateOfBirth { get; set; }
+        //public DateTime? DateOfBirth { get; set; }
 
         //[Required]
-        //public bool IsActive { get; set; }
+        //public bool? IsActive { get; set; }
 
-        //[Required]
-        //public string PhotoPath { get; set; } = string.Empty;
     }
 }

@@ -31,50 +31,50 @@ namespace cms_backend.Data
             }
 
             // 👇 Seed users
-            modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    Id = 1,
-                    Username = "admin",
-                    Email = "admin@example.com",
-                    PasswordHash = "12345678",
-                    CreatedAt = new DateTime(2024, 01, 01, 10, 0, 0, DateTimeKind.Utc),
-                    CreatedBy = 1
-                },
-                new User
-                {
-                    Id = 2,
-                    Username = "john",
-                    Email = "john@example.com",
-                    PasswordHash = "12345678",
-                    CreatedAt = new DateTime(2024, 01, 01, 10, 0, 0, DateTimeKind.Utc),
-                    CreatedBy = 1
-                }
-            );
+            //modelBuilder.Entity<User>().HasData(
+            //    new User
+            //    {
+            //        Id = 1,
+            //        Username = "admin",
+            //        Email = "admin@example.com",
+            //        PasswordHash = "12345678",
+            //        CreatedAt = new DateTime(2024, 01, 01, 10, 0, 0, DateTimeKind.Utc),
+            //        CreatedBy = 1
+            //    },
+            //    new User
+            //    {
+            //        Id = 2,
+            //        Username = "john",
+            //        Email = "john@example.com",
+            //        PasswordHash = "12345678",
+            //        CreatedAt = new DateTime(2024, 01, 01, 10, 0, 0, DateTimeKind.Utc),
+            //        CreatedBy = 1
+            //    }
+            //);
 
             // 👇 Seed posts
-            modelBuilder.Entity<Post>().HasData(
-                new Post
-                {
-                    Id = 1,
-                    Title = "Welcome to the Blog",
-                    Slug = "welcome-blog",
-                    Content = "This is the first blog post.",
-                    AuthorId = 1,
-                    CreatedAt = new DateTime(2024, 01, 01, 10, 0, 0, DateTimeKind.Utc),
-                    CreatedBy = 1
-                },
-                new Post
-                {
-                    Id = 2,
-                    Title = "EF Core Tips",
-                    Slug = "ef-core-tips",
-                    Content = "Learn how to use EF Core effectively.",
-                    AuthorId = 2,
-                    CreatedAt = new DateTime(2024, 01, 01, 10, 0, 0, DateTimeKind.Utc),
-                    CreatedBy = 1
-                }
-            );
+            //modelBuilder.Entity<Post>().HasData(
+            //    new Post
+            //    {
+            //        Id = 1,
+            //        Title = "Welcome to the Blog",
+            //        Slug = "welcome-blog",
+            //        Content = "This is the first blog post.",
+            //        AuthorId = 1,
+            //        CreatedAt = new DateTime(2024, 01, 01, 10, 0, 0, DateTimeKind.Utc),
+            //        CreatedBy = 1
+            //    },
+            //    new Post
+            //    {
+            //        Id = 2,
+            //        Title = "EF Core Tips",
+            //        Slug = "ef-core-tips",
+            //        Content = "Learn how to use EF Core effectively.",
+            //        AuthorId = 2,
+            //        CreatedAt = new DateTime(2024, 01, 01, 10, 0, 0, DateTimeKind.Utc),
+            //        CreatedBy = 1
+            //    }
+            //);
         }
 
         private static LambdaExpression GetSoftDeleteFilter(Type entityType)

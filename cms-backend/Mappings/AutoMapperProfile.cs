@@ -10,8 +10,8 @@ namespace cms_backend.Mappings
         public AutoMapperProfile() 
         {
             CreateMap<User, UserResponseDto>();
+            //CreateMap<PostUpdateDto, Post>();
             CreateMap<PostCreateDto, Post>();
-            CreateMap<PostUpdateDto, Post>();
             CreateMap<Post, PostResponseDto>()
             .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author));
         }
