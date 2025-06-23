@@ -22,6 +22,57 @@ namespace cms_backend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("cms_backend.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("cms_backend.Models.Post", b =>
                 {
                     b.Property<int>("Id")
@@ -70,28 +121,6 @@ namespace cms_backend.Migrations
                     b.HasIndex("AuthorId");
 
                     b.ToTable("Posts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AuthorId = 1,
-                            Content = "This is the first blog post.",
-                            CreatedAt = new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            Slug = "welcome-blog",
-                            Title = "Welcome to the Blog"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AuthorId = 2,
-                            Content = "Learn how to use EF Core effectively.",
-                            CreatedAt = new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            Slug = "ef-core-tips",
-                            Title = "EF Core Tips"
-                        });
                 });
 
             modelBuilder.Entity("cms_backend.Models.User", b =>
@@ -137,26 +166,15 @@ namespace cms_backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            Email = "admin@example.com",
-                            PasswordHash = "12345678",
-                            Username = "admin"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2024, 1, 1, 10, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            Email = "john@example.com",
-                            PasswordHash = "12345678",
-                            Username = "john"
-                        });
+            modelBuilder.Entity("cms_backend.Models.Category", b =>
+                {
+                    b.HasOne("cms_backend.Models.Category", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("cms_backend.Models.Post", b =>
@@ -168,6 +186,11 @@ namespace cms_backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("cms_backend.Models.Category", b =>
+                {
+                    b.Navigation("Children");
                 });
 
             modelBuilder.Entity("cms_backend.Models.User", b =>

@@ -11,8 +11,8 @@ namespace cms_backend.Mappings
         {
             CreateMap<User, UserResponseDto>();
             //CreateMap<PostUpdateDto, Post>();
-            CreateMap<PostCreateDto, Post>();
-            CreateMap<Post, PostResponseDto>()
+            CreateMap<CategoryCreateDto, Post>();
+            CreateMap<Post, CategoryResponseDto>()
             .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author));
         }
     }

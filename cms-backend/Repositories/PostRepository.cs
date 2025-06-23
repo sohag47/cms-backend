@@ -19,8 +19,7 @@ namespace cms_backend.Repositories
             await AddAsync(post);
             await SaveChangesAsync();
 
-            var responseDto = mapper.Map<PostResponseDto>(post);
-            return responseDto;
+            return mapper.Map<PostResponseDto>(post);
         }
 
     }
