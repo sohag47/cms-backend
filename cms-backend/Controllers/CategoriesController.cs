@@ -6,6 +6,7 @@ using cms_backend.Models;
 using cms_backend.Models.Base;
 using cms_backend.Repositories;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,11 +27,12 @@ namespace cms_backend.Controllers
 
         // GET: api/Categories
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery] CategoryQueryDto query)
         {
-            var categories = await repo.GetAllAsync();
-            var categoryDtos = mapper.Map<IEnumerable<CategoryResponseDto>>(categories);
-            return Ok(ApiResponse<IEnumerable<CategoryResponseDto>>.Ok(categoryDtos));
+            //var categories = await repo.GetAllAsync();
+            //var categoryDtos = mapper.Map<IEnumerable<CategoryResponseDto>>(categories);
+            //return Ok(ApiResponse<IEnumerable<CategoryResponseDto>>.Ok(categoryDtos));
+            return Ok(query);
         }
 
         // GET: api/Categories/5
@@ -90,6 +92,15 @@ namespace cms_backend.Controllers
             return Ok(ApiResponse<string>.Ok(null, "Category deleted successfully."));
         }
 
+
+        [HttpGet("dropdown")]
+        public async Task<IActionResult> GetDropdown([FromQuery] CategoryQueryDto query)
+        {
+            //var categories = await repo.GetAllAsync();
+            //var categoryDtos = mapper.Map<IEnumerable<CategoryResponseDto>>(categories);
+            //return Ok(ApiResponse<IEnumerable<CategoryResponseDto>>.Ok(categoryDtos));
+            return  Ok(query);
+        }
 
     }
 }
