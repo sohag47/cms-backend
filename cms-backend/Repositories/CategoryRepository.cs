@@ -23,6 +23,7 @@ namespace cms_backend.Repositories
 
             return mapper.Map<CategoryResponseDto>(category);
         }
+
         public async Task<ApiResponse<PagedResponseDto<CategoryResponseDto>>> GetPagedAsync(CategoryQueryDto query)
         {
             var queryable = context.Categories.AsQueryable();
@@ -40,7 +41,6 @@ namespace cms_backend.Repositories
             {
                 queryable = queryable.Where(c => c.Status == query.Status.Value);
             }
-
 
             var totalRecords = await queryable.CountAsync();
             var items = await queryable
@@ -84,6 +84,5 @@ namespace cms_backend.Repositories
 
             return ApiResponse<IEnumerable<DropdownResponseDto>>.Ok(dropdownItems, "Categories fetched successfully");
         }
-
     }
 }

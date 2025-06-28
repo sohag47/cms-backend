@@ -1,34 +1,19 @@
 ﻿using AutoMapper;
-using cms_backend.Data;
-using cms_backend.DTOs;
 using cms_backend.DTOs.Categories;
-using cms_backend.DTOs.Posts;
 using cms_backend.Enums;
 using cms_backend.Models;
 using cms_backend.Models.Base;
 using cms_backend.Repositories;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace cms_backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesController(ICategoryRepository _Repo, IMapper _mapper, ApplicationDbContext _context) : ControllerBase
+    public class CategoriesController(ICategoryRepository _Repo, IMapper _mapper) : ControllerBase
     {
         private readonly ICategoryRepository repo = _Repo;
         private readonly IMapper mapper = _mapper;
-        protected readonly ApplicationDbContext context = _context;
-
 
 
         // GET: api/Categories
@@ -52,14 +37,33 @@ namespace cms_backend.Controllers
             return Ok(ApiResponse<CategoryResponseDto>.Ok(categoryDtos, "Category found successfully"));
         }
 
+        
+        // POST: api/Categories
+        [HttpPost]
+        public async Task<IActionResult> Store([FromBody] List<CategoryCreateDto> dtos)
+        {
+            if (dtos == null || dtos.Count == 0)
+                return BadRequest(ApiResponse<string>.Fail("No categories provided."));
+
+            var categories = dtos.Select(dto => mapper.Map<Category>(dto)).ToList();
+
+            var ordered = categories.OrderBy(c => c.ParentId.HasValue ? 1 : 0).ToList();
+
+            await repo.AddRangeAsync(ordered);
+            await repo.SaveChangesAsync();
+
+            var responseDtos = ordered.Select(cat => mapper.Map<CategoryResponseDto>(cat)).ToList();
+
+            return Ok(ApiResponse<IEnumerable<CategoryResponseDto>>.Ok(responseDtos, "Category insert successful."));
+        }
+
         // PUT: api/Categories/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Category updatedPost)
         {
             var category = await repo.GetByIdAsync(id);
             if (category == null)
-                return NotFound(ApiResponse<string>.Fail("Post not found."));
+                return NotFound(ApiResponse<string>.Fail("Category not found."));
 
             category.Name = updatedPost.Name;
             category.Slug = updatedPost.Slug;
@@ -71,17 +75,6 @@ namespace cms_backend.Controllers
 
             return CreatedAtAction(nameof(Show), new { id = category.Id },
                 ApiResponse<Category>.Ok(category, "Category updated successfully."));
-        }
-
-        // POST: api/Categories
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<IActionResult> Store([FromBody] CategoryCreateDto dto)
-        {
-            var responseDto = await repo.CreateCategoryAsync(dto);
-
-            return CreatedAtAction(nameof(Show), new { id = responseDto.Id },
-                ApiResponse<CategoryResponseDto>.Ok(responseDto, "Category created successfully."));
         }
 
         // DELETE: api/Categories/5
@@ -104,6 +97,8 @@ namespace cms_backend.Controllers
             return Ok(result);
         }
 
+
+        // GET: api/Categories/import-csv
         [HttpPost("import-csv")]
         public async Task<IActionResult> ImportCsv(IFormFile file)
         {
@@ -164,8 +159,6 @@ namespace cms_backend.Controllers
 
             return Ok(ApiResponse<string>.Ok($"Successfully imported {orderedCategories.Count} categories."));
         }
-
-
 
     }
 }
