@@ -1,4 +1,5 @@
-﻿using cms_backend.Models.Base;
+﻿using cms_backend.Enums;
+using cms_backend.Models.Base;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
@@ -16,13 +17,13 @@ namespace cms_backend.Models
         public string Slug { get; set; } = null!;
 
         // Foreign key to User
-        public int? ParentId { get; set; } = 0;
+        public int? ParentId { get; set; }
 
         public Category? Parent { get; set; }
 
-        public ICollection<Category>? Children { get; set; }
+        public ICollection<Category>? Children { get; set; } = new List<Category>();
 
-        [Required, StringLength(100)]
-        public string Status { get; set; } = null!;
+        [Required]
+        public CategoryStatus Status { get; set; } = CategoryStatus.Active;
     }
 }

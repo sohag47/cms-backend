@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using cms_backend.Data;
+using cms_backend.DTOs;
 using cms_backend.DTOs.Categories;
 using cms_backend.DTOs.Posts;
 using cms_backend.Models;
@@ -8,31 +9,33 @@ using cms_backend.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace cms_backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesController(ICategoryRepository _Repo, IMapper _mapper) : ControllerBase
+    public class CategoriesController(ICategoryRepository _Repo, IMapper _mapper, ApplicationDbContext _context) : ControllerBase
     {
         private readonly ICategoryRepository repo = _Repo;
         private readonly IMapper mapper = _mapper;
+        protected readonly ApplicationDbContext context = _context;
 
-       
+
 
         // GET: api/Categories
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] CategoryQueryDto query)
         {
-            //var categories = await repo.GetAllAsync();
-            //var categoryDtos = mapper.Map<IEnumerable<CategoryResponseDto>>(categories);
-            //return Ok(ApiResponse<IEnumerable<CategoryResponseDto>>.Ok(categoryDtos));
-            return Ok(query);
+            var result = await repo.GetPagedAsync(query);
+            return Ok(result);
         }
 
         // GET: api/Categories/5
@@ -92,14 +95,12 @@ namespace cms_backend.Controllers
             return Ok(ApiResponse<string>.Ok(null, "Category deleted successfully."));
         }
 
-
+        // GET: api/Categories/dropdown
         [HttpGet("dropdown")]
-        public async Task<IActionResult> GetDropdown([FromQuery] CategoryQueryDto query)
+        public async Task<IActionResult> GetDropdown([FromQuery] CategoryDropdownQueryDto query)
         {
-            //var categories = await repo.GetAllAsync();
-            //var categoryDtos = mapper.Map<IEnumerable<CategoryResponseDto>>(categories);
-            //return Ok(ApiResponse<IEnumerable<CategoryResponseDto>>.Ok(categoryDtos));
-            return  Ok(query);
+            var result = await repo.GetDropdownAsync(query);
+            return Ok(result);
         }
 
     }

@@ -12,7 +12,7 @@ using cms_backend.Data;
 namespace cms_backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250623152029_InitialCreate")]
+    [Migration("20250627062229_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -58,10 +58,8 @@ namespace cms_backend.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");

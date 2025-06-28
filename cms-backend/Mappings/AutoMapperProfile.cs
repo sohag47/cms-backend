@@ -14,7 +14,7 @@ namespace cms_backend.Mappings
             //CreateMap<PostUpdateDto, Post>();
             CreateMap<CategoryCreateDto, Category>();
             CreateMap<Category, CategoryResponseDto>();
-            
+            CreateMap<Category, DropdownResponseDto>();
         }
     }
 }
