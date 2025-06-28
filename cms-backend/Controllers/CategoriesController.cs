@@ -3,6 +3,7 @@ using cms_backend.Data;
 using cms_backend.DTOs;
 using cms_backend.DTOs.Categories;
 using cms_backend.DTOs.Posts;
+using cms_backend.Enums;
 using cms_backend.Models;
 using cms_backend.Models.Base;
 using cms_backend.Repositories;
@@ -102,6 +103,69 @@ namespace cms_backend.Controllers
             var result = await repo.GetDropdownAsync(query);
             return Ok(result);
         }
+
+        [HttpPost("import-csv")]
+        public async Task<IActionResult> ImportCsv(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest(ApiResponse<string>.Fail("No file uploaded."));
+
+            var categories = new List<Category>();
+
+            using var reader = new StreamReader(file.OpenReadStream());
+            int lineNumber = 0;
+
+            while (!reader.EndOfStream)
+            {
+                var line = await reader.ReadLineAsync();
+                lineNumber++;
+
+                if (lineNumber == 1)
+                    continue; // Skip header
+
+                var parts = line.Split(',');
+
+                if (parts.Length < 4)
+                    continue; // Skip invalid rows
+
+                var name = parts[0].Trim();
+                var parentIdText = parts[1].Trim();
+                var statusText = parts[2].Trim();
+                var slug = parts[3].Trim();
+
+                if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(slug))
+                    continue;
+
+                int? parentId = int.TryParse(parentIdText, out var pid) ? pid : null;
+                bool statusParsed = Enum.TryParse<CategoryStatus>(statusText, true, out var status);
+
+                if (!statusParsed)
+                    status = CategoryStatus.Active;
+
+                categories.Add(new Category
+                {
+                    Name = name,
+                    ParentId = parentId,
+                    Status = status,
+                    Slug = slug,
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+
+            if (categories.Count == 0)
+                return BadRequest(ApiResponse<string>.Fail("No valid category data found."));
+
+            // Sort so parents (ParentId == null) come first
+            var orderedCategories = categories.OrderBy(c => c.ParentId.HasValue ? 1 : 0).ToList();
+
+            // Use your repository methods
+            await repo.AddRangeAsync(orderedCategories);
+            await repo.SaveChangesAsync();
+
+            return Ok(ApiResponse<string>.Ok($"Successfully imported {orderedCategories.Count} categories."));
+        }
+
+
 
     }
 }

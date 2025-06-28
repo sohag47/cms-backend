@@ -42,6 +42,10 @@ namespace cms_backend.Repositories
         {
             await _dbSet.AddAsync(entity);
         }
+        public async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _dbSet.AddRangeAsync(entities);
+        }
 
         public void Update(T entity)
         {
