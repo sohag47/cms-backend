@@ -13,8 +13,8 @@ namespace cms_backend.Data
         {
 
         }
-        public DbSet<Post> Posts => Set<Post>();
-        public DbSet<User> Users => Set<User>();
+        //public DbSet<Post> Posts => Set<Post>();
+        //public DbSet<User> Users => Set<User>();
         public DbSet<Category> Categories => Set<Category>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

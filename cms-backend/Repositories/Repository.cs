@@ -61,5 +61,10 @@ namespace cms_backend.Repositories
         {
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.AnyAsync(predicate);
+        }
     }
 }

@@ -54,7 +54,7 @@ namespace cms_backend.Repositories
                 categoryDtos, query.Page, query.PageSize, totalRecords
             );
 
-            return ApiResponse<PagedResponseDto<CategoryResponseDto>>.Ok(pagedResponse, "Categories fetched successfully");
+            return ApiResponse<PagedResponseDto<CategoryResponseDto>>.Ok("Categories fetched successfully", pagedResponse);
         }
 
         public async Task<ApiResponse<IEnumerable<DropdownResponseDto>>> GetDropdownAsync(CategoryDropdownQueryDto query)
@@ -82,7 +82,7 @@ namespace cms_backend.Repositories
                     Label = c.Name
                 }).ToListAsync();
 
-            return ApiResponse<IEnumerable<DropdownResponseDto>>.Ok(dropdownItems, "Categories fetched successfully");
+            return ApiResponse<IEnumerable<DropdownResponseDto>>.Ok("Categories fetched successfully", dropdownItems);
         }
     }
 }

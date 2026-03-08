@@ -2,7 +2,7 @@
 {
     public abstract class AuditableEntity
     {
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public int? CreatedBy { get; set; }
 
         public DateTime? UpdatedAt { get; set; }

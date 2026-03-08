@@ -9,7 +9,7 @@ namespace cms_backend.Models.Base
         public object? Errors { get; set; }
 
         // success response
-        public static ApiResponse<T> Ok(T data, string? message = null)
+        public static ApiResponse<T> Ok(string? message = null, T? data = default)
         {
             return new ApiResponse<T>
             {

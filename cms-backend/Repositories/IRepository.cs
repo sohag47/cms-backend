@@ -11,5 +11,6 @@ namespace cms_backend.Repositories
         void Update(T entity);
         void Delete(T entity);
         Task<bool> SaveChangesAsync();
+        Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
     }
 }

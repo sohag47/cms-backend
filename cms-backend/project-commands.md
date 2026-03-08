@@ -23,3 +23,15 @@ Server=localhost\\SQLEXPRESS;Database=cms_backend_db;Trusted_Connection=True;Tru
 4. Server name
 ```bash
 .\SQLEXPRESS 
+```
+
+# Remove Database
+```bash
+Drop-Database
+```
+# Remove Migrations
+```bash
+Remove-Migration
+```
+
+

@@ -21,7 +21,7 @@ namespace cms_backend.Models
 
         public Category? Parent { get; set; }
 
-        public ICollection<Category>? Children { get; set; } = new List<Category>();
+        public ICollection<Category> Children { get; set; } = new List<Category>();
 
         [Required]
         public CategoryStatus Status { get; set; } = CategoryStatus.Active;

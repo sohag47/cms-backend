@@ -24,7 +24,7 @@ namespace cms_backend.Controllers
         {
             var posts = await postRepo.GetAllAsync(p => p.Author);
             var postDtos = mapper.Map<IEnumerable<PostResponseDto>>(posts);
-            return Ok(ApiResponse<IEnumerable<PostResponseDto>>.Ok(postDtos));
+            return Ok(ApiResponse<IEnumerable<PostResponseDto>>.Ok("Post found", postDtos));
         }
 
         // GET api/post/5
@@ -37,7 +37,7 @@ namespace cms_backend.Controllers
                 return NotFound(ApiResponse<string>.Fail("Post not found."));
 
             var postDto = mapper.Map<PostResponseDto>(post);
-            return Ok(ApiResponse<PostResponseDto>.Ok(postDto, "Post found successfully"));
+            return Ok(ApiResponse<PostResponseDto>.Ok("Post found successfully", postDto));
         }
 
         // POST api/post
@@ -47,7 +47,7 @@ namespace cms_backend.Controllers
             var responseDto = await postRepo.CreatePostAsync(dto);
 
             return CreatedAtAction(nameof(Show), new { id = responseDto.Id },
-                ApiResponse<PostResponseDto>.Ok(responseDto, "Post created successfully."));
+                ApiResponse<PostResponseDto>.Ok("Post created successfully.", responseDto));
         }
 
         // PUT api/post/5
@@ -67,7 +67,7 @@ namespace cms_backend.Controllers
             await postRepo.SaveChangesAsync();
 
             return CreatedAtAction(nameof(Show), new { id = post.Id },
-                ApiResponse<Post>.Ok(post, "Post updated successfully."));
+                ApiResponse<Post>.Ok("Post updated successfully.", post));
         }
 
         // DELETE api/post/5
@@ -79,7 +79,7 @@ namespace cms_backend.Controllers
 
             postRepo.Delete(post);
             await postRepo.SaveChangesAsync();
-            return Ok(ApiResponse<string>.Ok(null, "Post deleted successfully."));
+            return Ok(ApiResponse<string>.Ok("Post deleted successfully.", null));
         }
     }
 }

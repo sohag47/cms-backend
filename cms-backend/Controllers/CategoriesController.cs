@@ -4,6 +4,7 @@ using cms_backend.Enums;
 using cms_backend.Models;
 using cms_backend.Models.Base;
 using cms_backend.Repositories;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 
 namespace cms_backend.Controllers
@@ -34,47 +35,52 @@ namespace cms_backend.Controllers
                 return NotFound(ApiResponse<string>.Fail("Category not found."));
 
             var categoryDtos = mapper.Map<CategoryResponseDto>(category);
-            return Ok(ApiResponse<CategoryResponseDto>.Ok(categoryDtos, "Category found successfully"));
+            return Ok(ApiResponse<CategoryResponseDto>.Ok("Category found successfully", categoryDtos));
         }
 
         
         // POST: api/Categories
         [HttpPost]
-        public async Task<IActionResult> Store([FromBody] List<CategoryCreateDto> dtos)
+        public async Task<IActionResult> Store([FromBody] CategoryCreateDto dto)
         {
-            if (dtos == null || dtos.Count == 0)
+            if (dto == null)
                 return BadRequest(ApiResponse<string>.Fail("No categories provided."));
 
-            var categories = dtos.Select(dto => mapper.Map<Category>(dto)).ToList();
+            var category = mapper.Map<Category>(dto);
 
-            var ordered = categories.OrderBy(c => c.ParentId.HasValue ? 1 : 0).ToList();
-
-            await repo.AddRangeAsync(ordered);
+            await repo.AddAsync(category);
             await repo.SaveChangesAsync();
 
-            var responseDtos = ordered.Select(cat => mapper.Map<CategoryResponseDto>(cat)).ToList();
-
-            return Ok(ApiResponse<IEnumerable<CategoryResponseDto>>.Ok(responseDtos, "Category insert successful."));
+            return Ok(ApiResponse<CategoryResponseDto>.Ok("Category insert successful."));
         }
 
         // PUT: api/Categories/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Category updatedPost)
+        public async Task<IActionResult> Update(int id, [FromBody] CategoryCreateDto dto)
         {
             var category = await repo.GetByIdAsync(id);
             if (category == null)
                 return NotFound(ApiResponse<string>.Fail("Category not found."));
 
-            category.Name = updatedPost.Name;
-            category.Slug = updatedPost.Slug;
-            category.Parent = updatedPost.Parent;
-            category.Status = updatedPost.Status;
+            if (dto.ParentId.HasValue)
+            {
+                if (dto.ParentId.Value == id)
+                    return BadRequest(ApiResponse<string>.Fail("Category cannot be its own parent."));
+
+                var parentExists = await repo.ExistsAsync(c => c.Id == dto.ParentId.Value);
+                if (!parentExists)
+                    return BadRequest(ApiResponse<string>.Fail("Parent category not found."));
+            }
+
+            category.Name = dto.Name;
+            category.Slug = dto.Slug;
+            category.ParentId = dto.ParentId;
+            category.Status = dto.Status;
 
             repo.Update(category);
             await repo.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(Show), new { id = category.Id },
-                ApiResponse<Category>.Ok(category, "Category updated successfully."));
+            return Ok(ApiResponse<CategoryResponseDto>.Ok("Category updated successfully."));
         }
 
         // DELETE: api/Categories/5
@@ -86,7 +92,7 @@ namespace cms_backend.Controllers
 
             repo.Delete(category);
             await repo.SaveChangesAsync();
-            return Ok(ApiResponse<string>.Ok(null, "Category deleted successfully."));
+            return Ok(ApiResponse<string>.Ok("Category deleted successfully."));
         }
 
         // GET: api/Categories/dropdown
