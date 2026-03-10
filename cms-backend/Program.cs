@@ -68,4 +68,11 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// for root route show welcome html page
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+// for welcome api
+app.MapGet("/api", () => Results.Ok(ApiResponse<string>.Ok("Hello, Welcome to CMS API")));
+
 app.Run();
