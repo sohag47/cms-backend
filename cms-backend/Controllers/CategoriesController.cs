@@ -7,84 +7,93 @@ using cms_backend.Repositories;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace cms_backend.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesController(ICategoryRepository _Repo, IMapper _mapper) : ControllerBase
+    [Route("api/[controller]")]
+    public class CategoriesController : ControllerBase
     {
-        private readonly ICategoryRepository repo = _Repo;
-        private readonly IMapper mapper = _mapper;
+        private readonly ICategoryRepository repo;
+        private readonly IMapper mapper;
+
+        public CategoriesController(ICategoryRepository repository, IMapper mapper)
+        {
+            this.repo = repository;
+            this.mapper = mapper;
+        }
 
 
-        // GET: api/Categories
-        [HttpGet]
-        public async Task<IActionResult> Index([FromQuery] CategoryQueryDto query)
+        [HttpGet]  // GET: api/categories
+        public async Task<IActionResult> List([FromQuery] CategoryQueryDto query)
         {
             var result = await repo.GetPagedAsync(query);
             return Ok(result);
         }
 
-        // GET: api/Categories/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Show(int id)
-        {
-            var category = await repo.GetByIdAsync(id);
 
-            if (category == null)
+        [HttpGet("{id:int}")] // GET: api/categories/5
+        public async Task<IActionResult> GetById(int id)
+        {
+            var item = await repo.GetByIdAsync(id);
+
+            if (item == null)
                 return NotFound(ApiResponse<string>.Fail("Category not found."));
 
-            var categoryDtos = mapper.Map<CategoryResponseDto>(category);
-            return Ok(ApiResponse<CategoryResponseDto>.Ok("Category found successfully", categoryDtos));
+            var category = mapper.Map<CategoryResponseDto>(item);
+            return Ok(ApiResponse<CategoryResponseDto>.Ok("Category found successfully", category));
         }
 
         
-        // POST: api/Categories
-        [HttpPost]
-        public async Task<IActionResult> Store([FromBody] CategoryCreateDto dto)
+        
+        [HttpPost] // POST: api/categories
+        public async Task<ActionResult<Category>> Create(Category request)
         {
-            if (dto == null)
-                return BadRequest(ApiResponse<string>.Fail("No categories provided."));
-
-            var category = mapper.Map<Category>(dto);
-
-            await repo.AddAsync(category);
+            await repo.AddAsync(request);
             await repo.SaveChangesAsync();
 
-            return Ok(ApiResponse<CategoryResponseDto>.Ok("Category insert successful."));
+            var category = mapper.Map<CategoryResponseDto>(request);
+
+            return CreatedAtAction(nameof(GetById), new { id = category.Id }, ApiResponse<CategoryResponseDto>.Ok("Category created successfully.", category));
         }
 
-        // PUT: api/Categories/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] CategoryCreateDto dto)
-        {
-            var category = await repo.GetByIdAsync(id);
-            if (category == null)
-                return NotFound(ApiResponse<string>.Fail("Category not found."));
 
-            if (dto.ParentId.HasValue)
+
+
+        [HttpPut("{id:int}")] // PUT: api/categories/5
+        public async Task<IActionResult> Update(int id, Category category)
+        {
+            var entity = await repo.GetByIdAsync(id);
+            if (entity is null)
             {
-                if (dto.ParentId.Value == id)
+                return NotFound(ApiResponse<string>.Fail("Category not found."));
+            }
+
+            if (category.ParentId.HasValue)
+            {
+                if (category.ParentId.Value == id)
                     return BadRequest(ApiResponse<string>.Fail("Category cannot be its own parent."));
 
-                var parentExists = await repo.ExistsAsync(c => c.Id == dto.ParentId.Value);
+                var parentExists = await repo.ExistsAsync(c => c.Id == category.ParentId.Value);
                 if (!parentExists)
                     return BadRequest(ApiResponse<string>.Fail("Parent category not found."));
             }
 
-            category.Name = dto.Name;
-            category.Slug = dto.Slug;
-            category.ParentId = dto.ParentId;
-            category.Status = dto.Status;
+            entity.Name = category.Name;
+            entity.Slug = category.Slug;
+            entity.ParentId = category.ParentId;
+            entity.Status = category.Status;
 
-            repo.Update(category);
+            repo.Update(entity);
             await repo.SaveChangesAsync();
 
-            return Ok(ApiResponse<CategoryResponseDto>.Ok("Category updated successfully."));
+            var responseDto = mapper.Map<CategoryResponseDto>(entity);
+            return Ok(ApiResponse<CategoryResponseDto>.Ok("Category updated successfully.", responseDto));
         }
+        
 
-        // DELETE: api/Categories/5
-        [HttpDelete("{id}")]
+
+        [HttpDelete("{id:int}")] // DELETE: api/categories/5
         public async Task<IActionResult> Delete(int id)
         {
             var category = await repo.GetByIdAsync(id);
@@ -92,11 +101,14 @@ namespace cms_backend.Controllers
 
             repo.Delete(category);
             await repo.SaveChangesAsync();
+
             return Ok(ApiResponse<string>.Ok("Category deleted successfully."));
         }
 
-        // GET: api/Categories/dropdown
-        [HttpGet("dropdown")]
+
+
+        
+        [HttpGet("dropdown")] // GET: api/categories/dropdown
         public async Task<IActionResult> GetDropdown([FromQuery] CategoryDropdownQueryDto query)
         {
             var result = await repo.GetDropdownAsync(query);
@@ -104,8 +116,8 @@ namespace cms_backend.Controllers
         }
 
 
-        // GET: api/Categories/import-csv
-        [HttpPost("import-csv")]
+        
+        [HttpPost("import-csv")] // GET: api/categories/import-csv
         public async Task<IActionResult> ImportCsv(IFormFile file)
         {
             if (file == null || file.Length == 0)

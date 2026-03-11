@@ -1,4 +1,6 @@
 ﻿
+using cms_backend.DTOs.Categories;
+
 namespace cms_backend.Models.Base
 {
     public class ApiResponse<T>
@@ -29,7 +31,6 @@ namespace cms_backend.Models.Base
                 Errors = errors
             };
         }
-
 
     }
 }
