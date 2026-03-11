@@ -47,21 +47,36 @@ namespace cms_backend.Controllers
         
         
         [HttpPost] // POST: api/categories
-        public async Task<ActionResult<Category>> Create(Category request)
+        public async Task<ActionResult<Category>> Create([FromBody] Category request)
         {
-            await repo.AddAsync(request);
+            if (request.ParentId.HasValue)
+            {
+                var parentExists = await repo.ExistsAsync(c => c.Id == request.ParentId.Value);
+                if (!parentExists)
+                    return BadRequest(ApiResponse<string>.Fail("Parent category not found."));
+            }
+
+            var category = new Category
+            {
+                Name = request.Name,
+                Slug = request.Slug,
+                ParentId = request.ParentId,
+                Status = request.Status,
+            };
+
+            await repo.AddAsync(category);
             await repo.SaveChangesAsync();
 
-            var category = mapper.Map<CategoryResponseDto>(request);
+            var responseDto = mapper.Map<CategoryResponseDto>(category);
 
-            return CreatedAtAction(nameof(GetById), new { id = category.Id }, ApiResponse<CategoryResponseDto>.Ok("Category created successfully.", category));
+            return CreatedAtAction(nameof(GetById), new { id = category.Id }, ApiResponse<CategoryResponseDto>.Ok("Category created successfully.", responseDto));
         }
 
 
 
 
         [HttpPut("{id:int}")] // PUT: api/categories/5
-        public async Task<IActionResult> Update(int id, Category category)
+        public async Task<ActionResult<Category>> Update(int id, [FromBody] Category dto)
         {
             var entity = await repo.GetByIdAsync(id);
             if (entity is null)
@@ -69,20 +84,20 @@ namespace cms_backend.Controllers
                 return NotFound(ApiResponse<string>.Fail("Category not found."));
             }
 
-            if (category.ParentId.HasValue)
+            if (dto.ParentId.HasValue)
             {
-                if (category.ParentId.Value == id)
+                if (dto.ParentId.Value == id)
                     return BadRequest(ApiResponse<string>.Fail("Category cannot be its own parent."));
 
-                var parentExists = await repo.ExistsAsync(c => c.Id == category.ParentId.Value);
+                var parentExists = await repo.ExistsAsync(c => c.Id == dto.ParentId.Value);
                 if (!parentExists)
                     return BadRequest(ApiResponse<string>.Fail("Parent category not found."));
             }
 
-            entity.Name = category.Name;
-            entity.Slug = category.Slug;
-            entity.ParentId = category.ParentId;
-            entity.Status = category.Status;
+            entity.Name = dto.Name;
+            entity.Slug = dto.Slug;
+            entity.ParentId = dto.ParentId;
+            entity.Status = dto.Status;
 
             repo.Update(entity);
             await repo.SaveChangesAsync();
