@@ -1,5 +1,4 @@
-﻿using cms_backend.DTOs.Users;
-using cms_backend.Models;
+﻿using cms_backend.Models;
 
 namespace cms_backend.DTOs.Categories
 {

@@ -8,6 +8,6 @@ namespace cms_backend.DTOs.Categories
         public string Name { get; set; } = null!;
         public string Slug { get; set; } = null!;
         public int? ParentId { get; set; }
-        public CategoryStatus Status { get; set; }
+        public CategoryStatus Status { get; set; } = CategoryStatus.Active;
     }
 }

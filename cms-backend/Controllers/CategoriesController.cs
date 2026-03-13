@@ -4,6 +4,7 @@ using cms_backend.Enums;
 using cms_backend.Models;
 using cms_backend.Models.Base;
 using cms_backend.Repositories;
+using FluentValidation;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,7 +48,7 @@ namespace cms_backend.Controllers
         
         
         [HttpPost] // POST: api/categories
-        public async Task<ActionResult<Category>> Create([FromBody] Category request)
+        public async Task<IActionResult> Create([FromBody] CategoryCreateDto request)
         {
             if (request.ParentId.HasValue)
             {
