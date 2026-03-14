@@ -7,13 +7,11 @@ using cms_backend.Models.Base;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace cms_backend.Repositories
-{
-    public class CategoryRepository(ApplicationDbContext context, IMapper _mapper) : Repository<Category>(context), ICategoryRepository
+namespace cms_backend.Repositories;
+
+public class CategoryRepository(ApplicationDbContext context, IMapper _mapper) : Repository<Category>(context), ICategoryRepository
     {
         private readonly IMapper mapper = _mapper;
-
-
 
         public async Task<CategoryResponseDto> CreateCategoryAsync(CategoryCreateDto dto)
         {
@@ -85,4 +83,4 @@ namespace cms_backend.Repositories
             return ApiResponse<IEnumerable<DropdownResponseDto>>.Ok("Categories fetched successfully", dropdownItems);
         }
     }
-}
+

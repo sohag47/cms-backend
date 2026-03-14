@@ -15,11 +15,9 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
 
 
-// Add FluentValidation Auto Validation
-builder.Services.AddFluentValidationAutoValidation();
+//// Add FluentValidation Auto Validation
+//builder.Services.AddFluentValidationAutoValidation();
 
-// Register all FluentValidation validators in this assembly
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 //builder.Services.AddValidatorsFromAssemblyContaining<CategoryCreateDtoValidator>();
 
 
@@ -44,6 +42,16 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 // Repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+// Use the recommended method to register FluentValidation services
+builder.Services.AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters();
+
+// Use the recommended method to register validators
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+
+
 
 // EF Core
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

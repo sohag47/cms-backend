@@ -1,13 +1,13 @@
 ﻿using cms_backend.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace cms_backend.DTOs.Categories
+namespace cms_backend.DTOs.Categories;
+
+public class CategoryCreateDto
 {
-    public class CategoryCreateDto
-    {
-        public string Name { get; set; } = null!;
-        public string Slug { get; set; } = null!;
-        public int? ParentId { get; set; }
-        public CategoryStatus Status { get; set; } = CategoryStatus.Active;
-    }
+    public string Name { get; set; } = string.Empty;
+    public string Slug { get; set; } = string.Empty;
+    public int? ParentId { get; set; }
+    public CategoryStatus Status { get; set; } = CategoryStatus.Active;
 }
+

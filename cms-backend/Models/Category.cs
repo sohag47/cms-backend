@@ -1,5 +1,6 @@
 ﻿using cms_backend.Enums;
 using cms_backend.Models.Base;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
