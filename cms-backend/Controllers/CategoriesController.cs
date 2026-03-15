@@ -14,23 +14,17 @@ namespace cms_backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class CategoriesController : ControllerBase
+public class CategoriesController(IRepository<Category> _repo, IMapper _mapper) : ControllerBase
 {
-    private readonly IRepository<Category> repo;
-    private readonly IMapper mapper;
-
-    public CategoriesController(IRepository<Category> repo, IMapper mapper)
-    {
-        this.repo = repo;
-        this.mapper = mapper;
-    }
+    private readonly IRepository<Category> _repo = _repo;
+    private readonly IMapper _mapper = _mapper;
 
 
     // GET: api/categories
     [HttpGet]
     public async Task<IActionResult> List([FromQuery] CategoryQueryDto query)
     {
-        var pagedCategories = await repo.GetPagedAsync(
+        var pagedCategories = await _repo.GetPagedAsync(
             page: query.Page,
             pageSize: query.PageSize,
             filter: c =>
@@ -39,7 +33,7 @@ public class CategoriesController : ControllerBase
             includes: q => q.Include(c => c.Parent)
         );
 
-        var result = mapper.Map<IEnumerable<CategoryResponseDto>>(pagedCategories.Data);
+        var result = _mapper.Map<IEnumerable<CategoryResponseDto>>(pagedCategories.Data);
 
         var response = new 
         {
@@ -58,12 +52,12 @@ public class CategoriesController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var item = await repo.GetByIdAsync(id);
+        var item = await _repo.GetByIdAsync(id);
 
         if (item == null)
             return NotFound(ApiResponse<string>.Fail("Category not found."));
 
-        var category = mapper.Map<CategoryResponseDto>(item);
+        var category = _mapper.Map<CategoryResponseDto>(item);
 
         return Ok(ApiResponse<CategoryResponseDto>
             .Ok("Category found successfully.", category));
@@ -77,18 +71,18 @@ public class CategoriesController : ControllerBase
     {
         if (dto.ParentId.HasValue)
         {
-            var parentExists = await repo.ExistsAsync(c => c.Id == dto.ParentId.Value);
+            var parentExists = await _repo.ExistsAsync(c => c.Id == dto.ParentId.Value);
 
             if (!parentExists)
                 return BadRequest(ApiResponse<string>.Fail("Parent category not found."));
         }
 
-        var category = mapper.Map<Category>(dto);
+        var category = _mapper.Map<Category>(dto);
 
-        await repo.AddAsync(category);
-        await repo.SaveChangesAsync();
+        await _repo.AddAsync(category);
+        await _repo.SaveChangesAsync();
 
-        var responseDto = mapper.Map<CategoryResponseDto>(category);
+        var responseDto = _mapper.Map<CategoryResponseDto>(category);
 
         return CreatedAtAction(
             nameof(GetById),
@@ -103,7 +97,7 @@ public class CategoriesController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] CategoryCreateDto dto)
     {
-        var entity = await repo.GetByIdAsync(id);
+        var entity = await _repo.GetByIdAsync(id);
 
         if (entity == null)
             return NotFound(ApiResponse<string>.Fail("Category not found."));
@@ -113,18 +107,18 @@ public class CategoriesController : ControllerBase
             if (dto.ParentId.Value == id)
                 return BadRequest(ApiResponse<string>.Fail("Category cannot be its own parent."));
 
-            var parentExists = await repo.ExistsAsync(c => c.Id == dto.ParentId.Value);
+            var parentExists = await _repo.ExistsAsync(c => c.Id == dto.ParentId.Value);
 
             if (!parentExists)
                 return BadRequest(ApiResponse<string>.Fail("Parent category not found."));
         }
 
-        mapper.Map(dto, entity);
+        _mapper.Map(dto, entity);
 
-        repo.Update(entity);
-        await repo.SaveChangesAsync();
+        _repo.Update(entity);
+        await _repo.SaveChangesAsync();
 
-        var response = mapper.Map<CategoryResponseDto>(entity);
+        var response = _mapper.Map<CategoryResponseDto>(entity);
 
         return Ok(ApiResponse<CategoryResponseDto>
             .Ok("Category updated successfully.", response));
@@ -135,13 +129,13 @@ public class CategoriesController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var category = await repo.GetByIdAsync(id);
+        var category = await _repo.GetByIdAsync(id);
 
         if (category == null)
             return NotFound(ApiResponse<string>.Fail("Category not found."));
 
-        repo.Delete(category);
-        await repo.SaveChangesAsync();
+        _repo.Delete(category);
+        await _repo.SaveChangesAsync();
 
         return Ok(ApiResponse<string>.Ok("Category deleted successfully."));
     }
@@ -199,8 +193,8 @@ public class CategoriesController : ControllerBase
         if (!categories.Any())
             return BadRequest(ApiResponse<string>.Fail("No valid category data found."));
 
-        await repo.AddRangeAsync(categories);
-        await repo.SaveChangesAsync();
+        await _repo.AddRangeAsync(categories);
+        await _repo.SaveChangesAsync();
 
         return Ok(ApiResponse<string>
             .Ok($"Successfully imported {categories.Count} categories."));

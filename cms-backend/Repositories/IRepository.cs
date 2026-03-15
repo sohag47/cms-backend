@@ -16,13 +16,6 @@ public interface IRepository<T> where T : BaseEntity
         Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
         Func<IQueryable<T>, IQueryable<T>>? includes = null);
 
-    //Task<IEnumerable<T>> GetAllAsync(
-    //    Expression<Func<T, bool>>? predicate = null,
-    //    Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-    //    bool disableTracking = true,
-    //    params Expression<Func<T, object>>[] includes
-    //);
-
     Task<T?> GetByIdAsync(int id);
 
     Task AddAsync(T entity);
