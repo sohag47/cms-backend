@@ -12,7 +12,7 @@ using cms_backend.Data;
 namespace cms_backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260313065819_InitialCreate")]
+    [Migration("20260315070326_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

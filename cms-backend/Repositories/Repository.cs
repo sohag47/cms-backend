@@ -1,70 +1,101 @@
 ﻿using cms_backend.Data;
+using cms_backend.Models.Base;
 using Microsoft.EntityFrameworkCore;
+using NuGet.ContentModel;
 using System.Linq.Expressions;
 
-namespace cms_backend.Repositories
+namespace cms_backend.Repositories;
+
+public class Repository<T> : IRepository<T> where T : BaseEntity
 {
-    public class Repository<T> : IRepository<T> where T : class
+    protected readonly ApplicationDbContext _context;
+    protected readonly DbSet<T> _dbSet;
+
+    public Repository(ApplicationDbContext context)
     {
-        protected readonly ApplicationDbContext _context;
-        protected readonly DbSet<T> _dbSet;
+        _context = context;
+        _dbSet = context.Set<T>();
+    }
 
-        public Repository(ApplicationDbContext context)
+    public IQueryable<T> Query() => _dbSet.AsQueryable();
+
+    public async Task<IEnumerable<T>> GetAllAsync(Func<IQueryable<T>, IQueryable<T>>? includes = null)
+    {
+        IQueryable<T> query = _dbSet;
+        if (includes != null)
+            query = includes(query);
+
+        return await query.ToListAsync();
+    }
+
+    public async Task<PagedResult<T>> GetPagedAsync(
+        int page,
+        int pageSize,
+        Expression<Func<T, bool>>? filter = null,
+        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+        Func<IQueryable<T>, IQueryable<T>>? includes = null)
+    {
+        IQueryable<T> query = _dbSet;
+
+        if (includes != null)
+            query = includes(query);
+
+        if (filter != null)
+            query = query.Where(filter);
+
+        var totalCount = await query.CountAsync();
+
+        if (orderBy != null)
+            query = orderBy(query);
+
+        var data = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResult<T>
         {
-            _context = context;
-            _dbSet = _context.Set<T>();
-        }
+            Total = total,
+            Page = page,
+            PageSize = pageSize,
+            Data = data
+        };
+    }
 
-        public async Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
-        {
-            IQueryable<T> query = _dbSet;
-            foreach (var include in includes)
-            {
-                query = query.Include(include);
-            }
+    public async Task<T?> GetByIdAsync(int id)
+    {
+        return await _dbSet.FindAsync(id);
+    }
 
-            return await query.ToListAsync();
-        }
+    
 
-        public async Task<T?> GetByIdAsync(int id, params Expression<Func<T, object>>[] includes)
-        {
-            IQueryable<T> query = _dbSet;
+    public async Task AddAsync(T entity)
+    {
+        await _dbSet.AddAsync(entity);
+    }
 
-            foreach (var include in includes)
-            {
-                query = query.Include(include);
-            }
+    public async Task AddRangeAsync(IEnumerable<T> entities)
+    {
+        await _dbSet.AddRangeAsync(entities);
+    }
 
-            return await query.FirstOrDefaultAsync(e => EF.Property<int>(e, "Id") == id);
-        }
+    public void Update(T entity)
+    {
+        _dbSet.Update(entity);
+    }
 
-        public async Task AddAsync(T entity)
-        {
-            await _dbSet.AddAsync(entity);
-        }
-        public async Task AddRangeAsync(IEnumerable<T> entities)
-        {
-            await _dbSet.AddRangeAsync(entities);
-        }
+    public void Delete(T entity)
+    {
+        _dbSet.Remove(entity);
+    }
 
-        public void Update(T entity)
-        {
-            _dbSet.Update(entity);
-        }
+    public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _dbSet.AnyAsync(predicate);
+    }
 
-        public void Delete(T entity)
-        {
-            _dbSet.Remove(entity);
-        }
-
-        public async Task<bool> SaveChangesAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
-        }
-
-        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
-        {
-            return await _dbSet.AnyAsync(predicate);
-        }
+    public async Task<int> SaveChangesAsync()
+    {
+        return await _context.SaveChangesAsync();
     }
 }

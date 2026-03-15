@@ -14,13 +14,12 @@ builder.Services.AddAutoMapper(typeof(Program));
 // Controllers
 builder.Services.AddControllers();
 
+// Use the recommended method to register FluentValidation services
+builder.Services.AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters();
 
-//// Add FluentValidation Auto Validation
-//builder.Services.AddFluentValidationAutoValidation();
-
-//builder.Services.AddValidatorsFromAssemblyContaining<CategoryCreateDtoValidator>();
-
-
+// Use the recommended method to register validators
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Custom API response for validation errors
 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -41,19 +40,9 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 
 // Repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-
-// Use the recommended method to register FluentValidation services
-builder.Services.AddFluentValidationAutoValidation()
-                .AddFluentValidationClientsideAdapters();
-
-// Use the recommended method to register validators
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 
-
-
-// EF Core
+// EF Core DB Connection
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
