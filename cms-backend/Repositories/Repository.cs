@@ -55,7 +55,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
         return new PagedResult<T>
         {
-            Total = total,
+            Total = totalCount,
             Page = page,
             PageSize = pageSize,
             Data = data

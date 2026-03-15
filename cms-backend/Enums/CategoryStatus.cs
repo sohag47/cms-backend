@@ -1,9 +1,8 @@
-﻿namespace cms_backend.Enums
+﻿namespace cms_backend.Enums;
+
+public enum CategoryStatus
 {
-    public enum CategoryStatus
-    {
-        Active = 1,
-        Inactive = 2,
-        Draft = 3,
-    }
+    Active = 1,
+    Inactive = 2,
+    Draft = 3,
 }

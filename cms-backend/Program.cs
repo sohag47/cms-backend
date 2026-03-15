@@ -15,8 +15,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
 
 // Use the recommended method to register FluentValidation services
-builder.Services.AddFluentValidationAutoValidation()
-                .AddFluentValidationClientsideAdapters();
+builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 
 // Use the recommended method to register validators
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
@@ -27,14 +26,14 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.InvalidModelStateResponseFactory = context =>
     {
         var errors = context.ModelState
-            .Where(x => x.Value?.Errors.Count > 0)
+            .Where(x => x.Value!.Errors.Count > 0)
             .ToDictionary(
-                x => x.Key,
-                x => x.Value?.Errors.Select(e => e.ErrorMessage).ToArray()
+                kvp => kvp.Key.Split('.').Last(),
+                kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray()
             );
-
         var response = ApiResponse<string>.Fail("Validation failed.", errors);
-        return new BadRequestObjectResult(response);
+
+        return new UnprocessableEntityObjectResult(response);
     };
 });
 
