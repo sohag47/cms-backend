@@ -43,7 +43,11 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 // EF Core DB Connection
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    // options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+
+
 
 // Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
@@ -52,6 +56,13 @@ builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
+
+// ✅ Auto-create DB and apply migrations on startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate(); // creates cms.db if it doesn't exist
+}
 
 if (app.Environment.IsDevelopment())
 {
