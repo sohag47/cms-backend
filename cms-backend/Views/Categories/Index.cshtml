@@ -1,0 +1,89 @@
+﻿@model IEnumerable<cms_backend.Models.Category>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<h1>Category List</h1>
+
+<p>
+    <a class="btn btn-primary" href="/admin/categories/create">Create New</a>
+</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.Slug)
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.Parent)
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.UpdatedAt)
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.UpdatedBy)
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.DeletedAt)
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.DeletedBy)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) {
+        <tr>
+            <td scope="row">
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Slug)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Parent.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeletedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeletedBy)
+            </td>
+            <td>
+                    <a class="btn btn-outline-warning" href="/admin/categories/edit/@item.Id">Edit</a>
+                    <a class="btn btn-outline-info" href="/admin/categories/details/@item.Id">Details</a>
+                    <a class="btn btn-outline-danger" href="/admin/categories/delete/@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
