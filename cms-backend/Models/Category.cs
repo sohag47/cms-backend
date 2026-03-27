@@ -4,21 +4,20 @@ using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace cms_backend.Models
+namespace cms_backend.Models;
+
+public class Category  : AuditableEntity
 {
-    public class Category  : AuditableEntity
-    {
-        public string Name { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
-        public string Slug { get; set; } = null!;
+    public string Slug { get; set; } = null!;
 
-        // Self reference
-        public int? ParentId { get; set; }
+    // Self reference
+    public int? ParentId { get; set; }
 
-        public Category? Parent { get; set; }
+    public Category? Parent { get; set; }
 
-        public ICollection<Category> Children { get; set; } = new List<Category>();
+    public ICollection<Category> Children { get; set; } = new List<Category>();
 
-        public CategoryStatus Status { get; set; } = CategoryStatus.Active;
-    }
+    public CategoryStatus Status { get; set; } = CategoryStatus.Active;
 }

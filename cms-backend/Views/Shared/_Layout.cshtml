@@ -20,7 +20,7 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="/">
                     <img src="~/images/bootstrap-logo.svg" alt="" width="30" height="24" class="d-inline-block align-text-top">
-                Bootstrap
+                Admin
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -71,53 +71,31 @@
     <script src="~/js/jquery-3.7.1.min.js"></script>
     <script src="~/js/select2.min.js"></script>
     <script src="~/DataTables/datatables.js"></script>
+
     <script>
-    $(document).ready(function () {
+        $(document).ready(function () {
 
-        // Initialize ALL datatables
-        var tables = {};
-        $('.datatable').each(function (index) {
-        var table = $(this).DataTable({
-            pageLength: 10,
-            ordering: true,
-            searching: true,
-            lengthMenu: [5, 10, 25, 50]
-        });
+        var table = $('#categoryTable').DataTable();
 
-        // store instance
-        tables[index] = table;
-
-        // attach filters inside same container (optional logic)
-        $(this).data('dt-instance', table);
-        });
-
-        // Initialize all Select2
-        $('.select2').select2({
-            width: '100%',
-            allowClear: true
-        });
-
-        // Generic filter handler 🔥
-        $('.table-filter').on('change', function () {
-
-            var column = $(this).data('column');
-            var value = $(this).val();
-
-            // apply filter to ALL tables (or customize per table)
-            $('.datatable').each(function () {
-                var table = $(this).data('dt-instance');
-                if (table) {
-                    table.column(column).search(value).draw();
-                }
+        // Init all select2
+        $('.select2').each(function () {
+            $(this).select2({
+                width: '100%',
+                placeholder: $(this).data('placeholder') || 'Select an option',
+                allowClear: true
             });
-
         });
 
-    });
-    </script>
-    <!-- Validation Scripts -->
-    <partial name="_ValidationScriptsPartial" />
+        // Filter by class
+        $('.filter-status').on('change', function () {
+        var value = $(this).val();
+        table.column(3).search(value).draw();
+        });
 
-    @RenderSection("Scripts", required: false)
+        });
+    </script>
+    
+    <!-- Validation Scripts -->
+   @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

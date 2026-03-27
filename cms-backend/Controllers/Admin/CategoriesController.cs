@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using cms_backend.Data;
+using cms_backend.DTOs.Admin;
+using cms_backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using cms_backend.Data;
-using cms_backend.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace cms_backend.Controllers.Admin;
 
@@ -49,10 +50,10 @@ public class CategoriesController(ApplicationDbContext context) : Controller
 
     // GET: Categories/Create
     [HttpGet("create")]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
-        ViewData["ParentId"] = new SelectList(_context.Categories, "Id", "Id");
-        return View();
+        ViewBag.Categories = await _context.Categories.ToListAsync();
+        return View(new CreateCategoryDto());
     }
 
 
@@ -60,16 +61,39 @@ public class CategoriesController(ApplicationDbContext context) : Controller
     // POST: Categories/Create
     [HttpPost("create")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Name,Slug,ParentId,Status,CreatedAt,CreatedBy,UpdatedAt,UpdatedBy,DeletedAt,DeletedBy,Id")] Category category)
+    public async Task<IActionResult> Create(CreateCategoryDto dto)
     {
-        if (ModelState.IsValid)
+        //return Json(category);
+
+        if (!ModelState.IsValid)
         {
-            _context.Add(category);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            ViewBag.Categories = await _context.Categories.ToListAsync();
+            return View(dto);
         }
-        ViewData["ParentId"] = new SelectList(_context.Categories, "Id", "Id", category.ParentId);
-        return View(category);
+
+        bool slugExists = await _context.Categories
+            .AnyAsync(c => c.Slug == dto.Slug);
+
+        if (slugExists)
+        {
+            ModelState.AddModelError("Slug", "slug already used");
+            ViewBag.Categories = await _context.Categories.ToListAsync();
+            return View(dto);
+        }
+
+        var category = new Category
+        {
+            Name = dto.Name,
+            Slug = dto.Slug,
+            ParentId = dto.ParentId == 0 ? null : dto.ParentId,
+            Status = dto.Status
+        };
+
+        _context.Categories.Add(category);
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Category created successfully!";
+        return RedirectToAction("Index");
     }
 
 
@@ -88,7 +112,7 @@ public class CategoriesController(ApplicationDbContext context) : Controller
         {
             return NotFound();
         }
-        ViewData["ParentId"] = new SelectList(_context.Categories, "Id", "Id", category.ParentId);
+        ViewData["ParentId"] = new SelectList(_context.Categories, "Id", "Name", category.ParentId);
         return View(category);
     }
 
@@ -124,7 +148,7 @@ public class CategoriesController(ApplicationDbContext context) : Controller
             }
             return RedirectToAction(nameof(Index));
         }
-        ViewData["ParentId"] = new SelectList(_context.Categories, "Id", "Id", category.ParentId);
+        ViewData["ParentId"] = new SelectList(_context.Categories, "Id", "Name", category.ParentId);
         return View(category);
     }
 
