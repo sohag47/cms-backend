@@ -4,86 +4,93 @@
     ViewData["Title"] = "Categories";
 }
 
-<h1>Category List</h1>
 
-<p>
-    <a class="btn btn-primary" href="/admin/categories/create">Create New</a>
-</p>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.Slug)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.Parent)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.CreatedBy)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.UpdatedAt)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.UpdatedBy)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.DeletedAt)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.DeletedBy)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model) {
-        <tr>
-            <td scope="row">
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Slug)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Parent.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeletedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeletedBy)
-            </td>
-            <td>
-                    <a class="btn btn-outline-warning" href="/admin/categories/edit/@item.Id">Edit</a>
-                    <a class="btn btn-outline-info" href="/admin/categories/details/@item.Id">Details</a>
-                    <a class="btn btn-outline-danger" href="/admin/categories/delete/@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+
+<div class="d-flex justify-content-between">
+    <h1>Category List</h1>
+    <p>
+        <a class="btn btn-primary" href="/admin/categories/create">Create New</a>
+    </p>
+</div>
+
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-striped datatable">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Slug)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Parent)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Status)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.CreatedAt)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.CreatedBy)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.UpdatedAt)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.UpdatedBy)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td scope="row">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Slug)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Parent.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Status)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedAt)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedBy)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UpdatedAt)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UpdatedBy)
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Action
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item" href="/admin/categories/edit/@item.Id">Edit</a></li>
+                                    <li><a class="dropdown-item" href="/admin/categories/details/@item.Id">Details</a></li>
+                                    <li><a class="dropdown-item" href="/admin/categories/delete/@item.Id">Delete</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
