@@ -27,7 +27,7 @@
             @Html.DisplayNameFor(model => model.Parent)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Parent.Id)
+            @(Model?.Parent?.Name ?? "None")
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Status)
@@ -58,18 +58,6 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.UpdatedBy)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DeletedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DeletedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DeletedBy)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DeletedBy)
         </dd>
     </dl>
     

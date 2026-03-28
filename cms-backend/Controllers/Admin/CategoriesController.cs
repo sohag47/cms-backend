@@ -20,8 +20,8 @@ public class CategoriesController(ApplicationDbContext context) : Controller
     [HttpGet("")]
     public async Task<IActionResult> Index()
     {
-        var applicationDbContext = _context.Categories.Include(c => c.Parent);
-        return View(await applicationDbContext.ToListAsync());
+        var categories = _context.Categories.Include(c => c.Parent);
+        return View(await categories.ToListAsync());
     }
 
 
@@ -29,15 +29,12 @@ public class CategoriesController(ApplicationDbContext context) : Controller
     [HttpGet("details/{id?}")]
     public async Task<IActionResult> Details(int? id)
     {
-        Console.WriteLine($"ID: {id}");
         if (id == null)
         {
             return NotFound();
         }
 
-        var category = await _context.Categories
-            .Include(c => c.Parent)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var category = await _context.Categories.Include(c => c.Parent).FirstOrDefaultAsync(m => m.Id == id);
         if (category == null)
         {
             return NotFound();
@@ -63,16 +60,13 @@ public class CategoriesController(ApplicationDbContext context) : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateCategoryDto dto)
     {
-        //return Json(category);
-
         if (!ModelState.IsValid)
         {
             ViewBag.Categories = await _context.Categories.ToListAsync();
             return View(dto);
         }
 
-        bool slugExists = await _context.Categories
-            .AnyAsync(c => c.Slug == dto.Slug);
+        bool slugExists = await _context.Categories.AnyAsync(c => c.Slug == dto.Slug);
 
         if (slugExists)
         {
@@ -83,8 +77,8 @@ public class CategoriesController(ApplicationDbContext context) : Controller
 
         var category = new Category
         {
-            Name = dto.Name,
-            Slug = dto.Slug,
+            Name = dto.Name!,
+            Slug = dto.Slug!,
             ParentId = dto.ParentId == 0 ? null : dto.ParentId,
             Status = dto.Status
         };
@@ -113,7 +107,17 @@ public class CategoriesController(ApplicationDbContext context) : Controller
             return NotFound();
         }
         ViewData["ParentId"] = new SelectList(_context.Categories, "Id", "Name", category.ParentId);
-        return View(category);
+
+        var dto = new EditCategoryDto
+        {
+            Id = category.Id,
+            Name = category.Name,
+            Slug = category.Slug,
+            ParentId = category.ParentId,
+            Status = category.Status
+        };
+
+        return View(dto);
     }
 
 
@@ -121,9 +125,9 @@ public class CategoriesController(ApplicationDbContext context) : Controller
     // POST: Categories/Edit/5
     [HttpPost("edit/{id}")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Name,Slug,ParentId,Status,CreatedAt,CreatedBy,UpdatedAt,UpdatedBy,DeletedAt,DeletedBy,Id")] Category category)
+    public async Task<IActionResult> Edit(int id, EditCategoryDto dto)
     {
-        if (id != category.Id)
+        if (id != dto.Id)
         {
             return NotFound();
         }
@@ -132,12 +136,23 @@ public class CategoriesController(ApplicationDbContext context) : Controller
         {
             try
             {
+                var category = await _context.Categories.FindAsync(id);
+                if (category == null)
+                {
+                    return NotFound();
+                }
+
+                category.Name = dto.Name;
+                category.Slug = dto.Slug;
+                category.ParentId = dto.ParentId;
+                category.Status = dto.Status;
+
                 _context.Update(category);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CategoryExists(category.Id))
+                if (!CategoryExists(dto.Id))
                 {
                     return NotFound();
                 }
@@ -148,8 +163,8 @@ public class CategoriesController(ApplicationDbContext context) : Controller
             }
             return RedirectToAction(nameof(Index));
         }
-        ViewData["ParentId"] = new SelectList(_context.Categories, "Id", "Name", category.ParentId);
-        return View(category);
+        ViewData["ParentId"] = new SelectList(_context.Categories, "Id", "Name", dto.ParentId);
+        return View(dto);
     }
 
 
@@ -163,9 +178,7 @@ public class CategoriesController(ApplicationDbContext context) : Controller
             return NotFound();
         }
 
-        var category = await _context.Categories
-            .Include(c => c.Parent)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var category = await _context.Categories.Include(c => c.Parent).FirstOrDefaultAsync(m => m.Id == id);
         if (category == null)
         {
             return NotFound();
